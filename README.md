@@ -10,11 +10,9 @@ Obilet Business API kullanılarak geliştirilmiş, kullanıcıların kalkış-va
 
 - [Özellikler](#-özellikler)
 - [Teknoloji Stack](#-teknoloji-stack)
-- [Mimari](#-mimari)
 - [Kurulum](#-kurulum)
 - [Kullanım](#-kullanım)
 - [API Entegrasyonu](#-api-entegrasyonu)
-- [Proje Yapısı](#-proje-yapısı)
 - [Öne Çıkan Özellikler](#-öne-çıkan-özellikler)
 
 ## ✨ Özellikler
