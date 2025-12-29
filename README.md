@@ -118,18 +118,15 @@ Geri döndüğünüzde son aramanız hazır olur!
 
 #### 1. GetSession
 - **URL**: `/api/client/getsession`
-
-Kullanıcıya özel session oluşturur.
+- Kullanıcıya özel session oluşturur.
 
 #### 2. GetBusLocations
 - **URL**: `/api/location/getbuslocations`
-
-Tüm otobüs lokasyonlarını getirir (cache'lenir).
+- Tüm otobüs lokasyonlarını getirir (cache'lenir).
 
 #### 3. GetJourneys
 - **URL**: `/api/journey/getbusjourneys`
-
-Seçilen kriterlere göre seferleri getirir.
+- Seçilen kriterlere göre seferleri getirir.
 
 ### Authentication
 Tüm isteklerde `Authorization: Basic {token}` header'ı gönderilir.
@@ -142,23 +139,14 @@ Tüm isteklerde `Authorization: Basic {token}` header'ı gönderilir.
 ## 🎯 Öne Çıkan Özellikler
 
 ### 1. MemoryCache ile Performans Optimizasyonu
-   - 5 dakika cache ile API çağrısı azaltma var cacheKey = $"BusLocations_{searchText}"; if (!_cache.TryGetValue(cacheKey, out List<BusLocation> locations)) { // API'den çek ve cache'le }
 
 ### 2. Polly ile Resilience
-   - 3 retry + exponential backoff
-      var retryPolicy = HttpPolicyExtensions.HandleTransientHttpError().WaitAndRetryAsync(3, retryAttempt => TimeSpan.FromSeconds(Math.Pow(2, retryAttempt)));
-   - Circuit breaker
-      var circuitBreakerPolicy = HttpPolicyExtensions.HandleTransientHttpError().CircuitBreakerAsync(5, TimeSpan.FromSeconds(30));
 
 ### 3. Global Exception Middleware
-   - AJAX ve web request'leri ayırt eder if (context.Request.Headers["X-Requested-With"] == "XMLHttpRequest") { // JSON response } else { // Error sayfasına yönlendir }
 
 ### 4. FluentValidation ile Type-Safe Validasyon
-   - RuleFor(x => x.OriginId).NotEqual(x => x.DestinationId).WithMessage(ErrorMessages.SameLocationError);
 
 ### 5. Custom JSON Converter
-   - [JsonConverter(typeof(FlexibleIntConverter))]
-     public int? Station { get; set; }
 
 
 ## 📊 Performans
@@ -209,7 +197,7 @@ Tüm isteklerde `Authorization: Basic {token}` header'ı gönderilir.
 
 ## 📝 Lisans
 
-Bu proje bir case study projesidir ve eğitim amaçlıdır.
+Bu proje bir case study projesidir.
 
 ## 👤 Yazar
 
