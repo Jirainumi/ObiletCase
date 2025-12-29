@@ -76,7 +76,7 @@ dotnet restore
    - `appsettings.json` dosyasına Obilet Business API anahtarınızı ekleyin.
    { "ObiletApi": { "BaseUrl": "https://v2-api.obilet.com", "ApiClientToken": "YOUR_API_CLIENT_TOKEN_HERE" } }
 
-4. **Uygulamayı Çalıştırın**
+4. **Projeyi Derleyin**
 dotnet build
 
 5. **Uygulamayı Çalıştırın**
