@@ -67,21 +67,20 @@ Obilet Business API kullanılarak geliştirilmiş, kullanıcıların kalkış-va
 ### Adımlar
 
 1. **Projeyi Klonlayın**
-git clone https://github.com/Jirainumi/ObiletCase.git cd ObiletCase
+   - git clone https://github.com/Jirainumi/ObiletCase.git cd ObiletCase
 
-**Bağımlılıkları Yükleyin**
-dotnet restore
+2. **Bağımlılıkları Yükleyin**
+   - dotnet restore
 
 3. **API Anahtarını Ayarlayın**
    - `appsettings.json` dosyasına Obilet Business API anahtarınızı ekleyin.
    { "ObiletApi": { "BaseUrl": "https://v2-api.obilet.com", "ApiClientToken": "YOUR_API_CLIENT_TOKEN_HERE" } }
 
 4. **Projeyi Derleyin**
-dotnet build
+   - dotnet build
 
 5. **Uygulamayı Çalıştırın**
-dotnet run
-
+   - dotnet run
 
 ## 📖 Kullanım
 
