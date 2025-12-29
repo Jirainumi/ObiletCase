@@ -1,0 +1,198 @@
+PRD – Obilet Journey Search Web Application
+1. Overview
+
+Bu doküman, obilet.com Business API kullanılarak geliştirilecek olan, kullanıcıların kalkış noktası, varış noktası ve tarih seçerek otobüs seferlerini listeleyebildiği bir web uygulamasının ürün gereksinimlerini tanımlar.
+
+Uygulama, ASP.NET Core MVC (.NET 9) kullanılarak geliştirilecek ve tüm üçüncü parti API çağrıları backend üzerinden yapılacaktır.
+
+2. Goals & Objectives
+
+Kullanıcıların hızlı ve kolay şekilde otobüs seferi araması yapabilmesi
+
+Obilet Business API ile doğru, güvenli ve session-bazlı entegrasyon
+
+Clean Code, SOLID ve modern .NET mimari pratiklerinin uygulanması
+
+Ölçeklenebilir, okunabilir ve genişletilebilir bir yapı oluşturulması
+
+3. Tech Stack
+Katman	Teknoloji
+Backend	ASP.NET Core MVC (.NET 9)
+Frontend	Razor Pages / MVC Views
+API Communication	HttpClientFactory
+Session Management	In-memory / Distributed Session
+Storage (Client Side)	LocalStorage
+Design Pattern	Repository, Service Layer
+Serialization	System.Text.Json
+4. User Flow
+
+Kullanıcı uygulamaya girer
+
+Backend üzerinden GetSession çağrılır ve kullanıcıya özel session oluşturulur
+
+Index Page yüklenir
+
+Kullanıcı:
+
+Kalkış & varış seçer
+
+Tarih belirler
+
+Search butonuna basar
+
+Journey Index Page’e yönlendirilir
+
+Seferler listelenir
+
+Kullanıcı geri dönebilir
+
+5. Functional Requirements
+5.1 Application-Wide Requirements
+
+❗ Tüm Obilet API çağrıları sadece backend üzerinden yapılacaktır
+
+Her kullanıcı için:
+
+GetSession API çağrısı ile session oluşturulacaktır
+
+Session bilgisi subsequent request’lerde kullanılacaktır
+
+API authentication header’da ApiClientToken gönderilecektir
+
+Kaynak: Obilet Programming Assignment PDF 
+
+obiletcom_Programming_Assignmen…
+
+5.2 Index Page (Search Page)
+Data Fetching
+
+Kalkış & varış noktaları:
+
+GetBusLocations API’sinden çekilecektir
+
+Default sıralama:
+
+API response’taki default sıralamaya göre
+
+Default tarih:
+
+Yarın
+
+User Actions
+
+Text-based location search
+
+Origin ↔ Destination swap
+
+Quick date buttons:
+
+Today
+
+Tomorrow
+
+Search action
+
+Validations
+
+Origin ≠ Destination
+
+Departure Date ≥ Today
+
+Persistence
+
+Son seçilen:
+
+Origin
+
+Destination
+
+Departure Date
+
+Client-side (LocalStorage) saklanacaktır
+
+5.3 Journey Index Page (Result Page)
+Data Fetching
+
+Kullanıcı seçimleri ile:
+
+GetJourneys API çağrısı yapılacaktır
+
+Display Rules
+
+Seferler:
+
+DepartureTime’a göre artan sırada
+
+Geri dönüş butonu:
+
+Index Page’e yönlendirir
+
+6. API Integration Details
+Required APIs
+API	Purpose
+GetSession	Kullanıcıya özel session oluşturma
+GetBusLocations	Lokasyon listesi
+GetJourneys	Sefer listesi
+Common Headers
+Authorization: Basic {ApiClientToken}
+Content-Type: application/json
+
+7. Error Handling
+
+API timeout / failure durumları kullanıcıya sade mesajlarla gösterilecektir
+
+Validation hataları UI üzerinde inline olarak sunulacaktır
+
+Session süresi dolarsa otomatik yeniden session alınacaktır
+
+8. Non-Functional Requirements
+
+Response süreleri < 2s hedeflenecektir
+
+Kod:
+
+Clean Code
+
+SOLID prensiplerine uygun
+
+Yorumlanmış
+
+Test edilebilir servis yapısı
+
+9. Suggested Architecture
+/Controllers
+  - HomeController
+  - JourneyController
+
+/Services
+  - ObiletSessionService
+  - BusLocationService
+  - JourneyService
+
+/Repositories
+  - ObiletApiClient
+
+/Models
+  - RequestModels
+  - ResponseModels
+  - ViewModels
+
+10. Success Criteria
+
+API’ler eksiksiz ve doğru çalışıyor
+
+Session yönetimi kullanıcı bazlı
+
+Validation kuralları eksiksiz
+
+Kod okunabilir ve genişletilebilir
+
+11. Bonus Opportunities
+
+MemoryCache ile location caching
+
+Polly ile retry & circuit breaker
+
+Global Exception Middleware
+
+FluentValidation

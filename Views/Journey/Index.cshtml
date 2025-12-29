@@ -1,0 +1,202 @@
+@model ObiletCase.Models.ViewModels.JourneyListViewModel
+@using ObiletCase.Helpers
+@{
+    ViewData["Title"] = "Sefer Listesi";
+}
+
+<!-- Bu satır EKSİK: -->
+<link rel="stylesheet" href="~/css/journey.css" />
+
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-12">
+            <!-- Geri Dön Butonu -->
+            <a asp-controller="Home" asp-action="Index" class="btn btn-secondary mb-3">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-left" viewBox="0 0 16 16">
+                    <path fill-rule="evenodd" d="M15 8a.5.5 0 0 0-.5-.5H2.707l3.147-3.146a.5.5 0 1 0-.708-.708l-4 4a.5.5 0 0 0 0 .708l4 4a.5.5 0 0 0 .708-.708L2.707 8.5H14.5A.5.5 0 0 0 15 8z" />
+                </svg>
+                Geri Dön
+            </a>
+
+            <!-- Sefer Bilgileri -->
+            <div class="card mb-4">
+                <div class="card-header bg-info text-white">
+                    <h5 class="mb-0">Sefer Bilgileri</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-4">
+                            <strong>Kalkış:</strong> @Model.OriginLocation?.Name
+                        </div>
+                        <div class="col-md-4">
+                            <strong>Varış:</strong> @Model.DestinationLocation?.Name
+                        </div>
+                        <div class="col-md-4">
+                            <strong>Tarih:</strong> @Model.JourneyDate.ToString("dd.MM.yyyy")
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sefer Listesi -->
+            @if (Model.Journeys != null && Model.Journeys.Any())
+            {
+                <div class="row">
+                    @foreach (var journey in Model.Journeys)
+                    {
+                        <div class="col-12 mb-3">
+                            <div class="card shadow-sm">
+                                <div class="card-body">
+                                    <div class="row align-items-center">
+                                        <!-- Partner Logosu -->
+                                        <div class="col-md-2 text-center">
+                                            <img src="@ObiletImageHelper.GetPartnerLogoUrl(journey.PartnerId)"
+                                                 alt="@journey.PartnerName"
+                                                 class="img-fluid mb-2 partner-logo"
+                                                 onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+                                            <div style="display:none;">
+                                                <strong>@journey.PartnerName</strong>
+                                            </div>
+                                            @if (journey.PartnerRating.HasValue)
+                                            {
+                                                <div class="small text-warning rating-badge">
+                                                    ⭐ @journey.PartnerRating.Value.ToString("N1")
+                                                </div>
+                                            }
+                                        </div>
+
+                                        <!-- Kalkış Saati -->
+                                        <div class="col-md-2">
+                                            <div class="text-center">
+                                                <div class="h5 mb-0">@journey.JourneyInfo?.Departure.ToString("HH:mm")</div>
+                                                <small class="text-muted">@journey.OriginLocation</small>
+                                            </div>
+                                        </div>
+
+                                        <!-- Ok ve Süre -->
+                                        <div class="col-md-1 text-center">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-arrow-right text-primary" viewBox="0 0 16 16">
+                                                <path fill-rule="evenodd" d="M1 8a.5.5 0 0 1 .5-.5h11.793l-3.147-3.146a.5.5 0 0 1 .708-.708l4 4a.5.5 0 0 1 0 .708l-4 4a.5.5 0 0 1-.708-.708L13.293 8.5H1.5A.5.5 0 0 1 1 8z" />
+                                            </svg>
+                                            <div class="mt-1">
+                                                <small class="text-muted">@journey.JourneyInfo?.Duration</small>
+                                            </div>
+                                        </div>
+
+                                        <!-- Varış Saati -->
+                                        <div class="col-md-2">
+                                            <div class="text-center">
+                                                <div class="h5 mb-0">@journey.JourneyInfo?.Arrival.ToString("HH:mm")</div>
+                                                <small class="text-muted">@journey.DestinationLocation</small>
+                                            </div>
+                                        </div>
+
+                                        <!-- Otobüs Bilgileri -->
+                                        <div class="col-md-3">
+                                            <div class="text-center">
+                                                <small class="text-muted d-block">@journey.BusType</small>
+                                                @if (journey.AvailableSeats > 0)
+                                                {
+                                                    <small class="text-success d-block">
+                                                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" viewBox="0 0 16 16">
+                                                            <path d="M8 3a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3z" />
+                                                            <path d="m5.93 6.704-.846 8.451a.768.768 0 0 0 1.523.203l.81-4.865a.59.59 0 0 1 1.165 0l.81 4.865a.768.768 0 0 0 1.523-.203l-.845-8.451A1.5 1.5 0 0 1 10.5 5.5L13 2.284a.796.796 0 0 0-1.239-.998L9.634 3.84a.72.72 0 0 1-.33.235c-.23.074-.665.176-1.304.176-.64 0-1.074-.102-1.305-.176a.72.72 0 0 1-.329-.235L4.239 1.286a.796.796 0 0 0-1.24.998l2.5 3.216c.317.316.475.758.43 1.204z" />
+                                                        </svg>
+                                                        @journey.AvailableSeats Koltuk
+                                                    </small>
+                                                }
+                                            </div>
+                                        </div>
+
+                                        <!-- Fiyat ve Seç Butonu -->
+                                        <div class="col-md-2 text-end">
+                                            <div class="h4 text-primary mb-0">
+                                                @if (journey.JourneyInfo?.InternetPrice > 0)
+                                                {
+                                                    <span>@journey.JourneyInfo.InternetPrice.ToString("N2")</span>
+                                                }
+                                                else if (journey.JourneyInfo?.OriginalPrice > 0)
+                                                {
+                                                    <span>@journey.JourneyInfo.OriginalPrice.ToString("N2")</span>
+                                                }
+                                                <small> @journey.JourneyInfo?.Currency</small>
+                                            </div>
+                                            @if (journey.JourneyInfo?.OriginalPrice > 0 && journey.JourneyInfo?.InternetPrice > 0 && journey.JourneyInfo.OriginalPrice > journey.JourneyInfo.InternetPrice)
+                                            {
+                                                <small class="text-muted text-decoration-line-through d-block">
+                                                    @journey.JourneyInfo.OriginalPrice.ToString("N2") @journey.JourneyInfo.Currency
+                                                </small>
+                                            }
+                                            <button class="btn btn-primary btn-sm mt-2 w-100">Seç</button>
+                                        </div>
+                                    </div>
+
+                                    @* Özellikler - İkonlarla *@
+                                    @if (journey.Features != null && journey.Features.Any())
+                                    {
+                                        <div class="row mt-3">
+                                            <div class="col-12">
+                                                <div class="d-flex flex-wrap gap-2 align-items-center">
+                                                    <small class="text-muted"><strong>Özellikler:</strong></small>
+                                                    @foreach (var feature in journey.Features.Take(6))
+                                                    {
+                                                        <div class="d-flex align-items-center gap-1"
+                                                             data-bs-toggle="tooltip"
+                                                             data-bs-placement="top"
+                                                             title="@feature.Name">
+                                                            <img src="@ObiletImageHelper.GetFeatureIconUrl(feature.Id)"
+                                                                 alt="@feature.Name"
+                                                                 class="feature-icon"
+                                                                 onerror="this.style.display='none';">
+                                                            <small class="text-muted">@feature.Name</small>
+                                                        </div>
+                                                    }
+                                                    @if (journey.Features.Count > 6)
+                                                    {
+                                                        <small class="text-muted">+@(journey.Features.Count - 6) daha</small>
+                                                    }
+                                                </div>
+                                            </div>
+                                        </div>
+                                    }
+
+                                    @* Journey Features (String List) *@
+                                    @if (journey.JourneyInfo?.Features != null && journey.JourneyInfo.Features.Any())
+                                    {
+                                        <div class="row mt-2">
+                                            <div class="col-12">
+                                                <small class="text-info">
+                                                    @string.Join(" • ", journey.JourneyInfo.Features)
+                                                </small>
+                                            </div>
+                                        </div>
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+            }
+            else
+            {
+                <div class="alert alert-warning">
+                    <h5>Sefer Bulunamadı</h5>
+                    <p>Seçtiğiniz kriterlere uygun sefer bulunmamaktadır. Lütfen farklı bir tarih veya rota deneyiniz.</p>
+                    <a asp-controller="Home" asp-action="Index" class="btn btn-primary">Yeni Arama Yap</a>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        // Bootstrap tooltip'lerini aktifleştir
+        document.addEventListener('DOMContentLoaded', function () {
+            var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+            var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+                return new bootstrap.Tooltip(tooltipTriggerEl);
+            });
+        });
+    </script>
+}

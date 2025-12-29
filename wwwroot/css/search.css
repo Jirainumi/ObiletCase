@@ -1,0 +1,46 @@
+/* ===== Search Form Styles ===== */
+
+.location-search {
+    position: relative;
+}
+
+.dropdown-menu {
+    z-index: 1050;
+}
+
+.dropdown-item {
+    cursor: pointer;
+}
+
+.dropdown-item:hover {
+    background-color: #f8f9fa;
+}
+
+#swapLocations {
+    transition: transform 0.3s ease;
+}
+
+#swapLocations:hover {
+    transform: rotate(180deg);
+}
+
+.quick-date {
+    transition: all 0.2s ease;
+}
+
+.quick-date.active {
+    background-color: #0d6efd;
+    color: white;
+    border-color: #0d6efd;
+}
+
+/* Validation styles */
+.field-validation-error {
+    color: #dc3545;
+    font-size: 0.875rem;
+    margin-top: 0.25rem;
+}
+
+.input-validation-error {
+    border-color: #dc3545;
+}

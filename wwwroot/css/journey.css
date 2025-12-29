@@ -1,0 +1,85 @@
+/* ===== Obilet Journey Card Styles ===== */
+
+/* Partner Logo stilleri */
+.partner-logo {
+    max-height: 50px;
+    max-width: 120px;
+    object-fit: contain;
+}
+
+/* Feature icon stilleri */
+.feature-icon {
+    width: 20px;
+    height: 20px;
+    vertical-align: middle;
+}
+
+/* Journey card hover efekti */
+.card:hover {
+    transform: translateY(-2px);
+    transition: transform 0.2s ease-in-out;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.15) !important;
+}
+
+/* Rating badge */
+.rating-badge {
+    font-size: 0.875rem;
+    color: #ffc107;
+}
+
+/* Journey card genel stilleri */
+.journey-card {
+    transition: all 0.3s ease;
+    border: 1px solid #e0e0e0;
+}
+
+.journey-card:hover {
+    border-color: #258cfb;
+}
+
+/* Fiyat gösterimi */
+.price-display {
+    font-weight: 600;
+    color: #258cfb;
+}
+
+.original-price {
+    text-decoration: line-through;
+    color: #6c757d;
+    font-size: 0.875rem;
+}
+
+/* Özellik listesi */
+.features-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    align-items: center;
+}
+
+.feature-item {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+    padding: 0.25rem 0.5rem;
+    background-color: #f8f9fa;
+    border-radius: 4px;
+    font-size: 0.875rem;
+}
+
+/* Responsive düzenlemeler */
+@media (max-width: 768px) {
+    .journey-card .row > div {
+        margin-bottom: 0.5rem;
+    }
+    
+    .partner-logo {
+        max-height: 40px;
+        max-width: 100px;
+    }
+    
+    .feature-icon {
+        width: 16px;
+        height: 16px;
+    }
+}

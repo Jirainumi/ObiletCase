@@ -1,0 +1,563 @@
+﻿@model ObiletCase.Models.ViewModels.SearchViewModel
+@{
+    ViewData["Title"] = "Otobüs Bileti Ara";
+}
+
+<link rel="stylesheet" href="~/css/search.css" />
+
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-lg-10">
+            <div class="card shadow">
+                <div class="card-header bg-primary text-white">
+                    <h3 class="mb-0">Otobüs Bileti Ara</h3>
+                </div>
+                <div class="card-body">
+                    @if (TempData["Error"] != null)
+                    {
+                        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                            @TempData["Error"]
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                    }
+
+                    <form id="searchForm" asp-controller="Journey" asp-action="Index" method="get">
+                        <div class="row g-3">
+                            <!-- Kalkış Noktası -->
+                            <div class="col-md-5">
+                                <label for="originId" class="form-label">Kalkış Noktası</label>
+                                <div class="dropdown position-relative">
+                                    <div class="input-group">
+                                        <input type="text"
+                                               id="originSearch"
+                                               class="form-control location-search"
+                                               placeholder="Kalkış noktası ara..."
+                                               autocomplete="off"
+                                               aria-expanded="false"
+                                               aria-haspopup="true">
+                                        <button class="btn btn-outline-secondary clear-btn" 
+                                                type="button" 
+                                                id="clearOrigin"
+                                                style="display: none;"
+                                                title="Temizle">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                                                <path d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8 2.146 2.854Z"/>
+                                            </svg>
+                                        </button>
+                                    </div>
+                                    <input type="hidden" id="originId" name="originId">
+                                    <ul id="originDropdown" class="dropdown-menu w-100" style="max-height: 300px; overflow-y: auto;"></ul>
+                                </div>
+                                <div id="originError" class="invalid-feedback" style="display: none;"></div>
+                            </div>
+
+                            <!-- Swap Butonu -->
+                            <div class="col-md-2 d-flex align-items-end">
+                                <button type="button" id="swapLocations" class="btn btn-outline-secondary w-100">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-arrow-left-right" viewBox="0 0 16 16">
+                                        <path fill-rule="evenodd" d="M1 11.5a.5.5 0 0 0 .5.5h11.793l-3.147 3.146a.5.5 0 0 0 .708.708l4-4a.5.5 0 0 0 0-.708l-4-4a.5.5 0 0 0-.708.708L13.293 11H1.5a.5.5 0 0 0-.5.5zm14-7a.5.5 0 0 1-.5.5H2.707l3.147 3.146a.5.5 0 1 1-.708.708l-4-4a.5.5 0 0 1 0-.708l4-4a.5.5 0 1 1 .708.708L2.707 4H14.5a.5.5 0 0 1 .5.5z" />
+                                    </svg>
+                                </button>
+                            </div>
+
+                            <!-- Varış Noktası -->
+                            <div class="col-md-5">
+                                <label for="destinationId" class="form-label">Varış Noktası</label>
+                                <div class="dropdown position-relative">
+                                    <div class="input-group">
+                                        <input type="text"
+                                               id="destinationSearch"
+                                               class="form-control location-search"
+                                               placeholder="Varış noktası ara..."
+                                               autocomplete="off"
+                                               aria-expanded="false"
+                                               aria-haspopup="true">
+                                        <button class="btn btn-outline-secondary clear-btn" 
+                                                type="button" 
+                                                id="clearDestination"
+                                                style="display: none;"
+                                                title="Temizle">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                                                <path d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8 2.146 2.854Z"/>
+                                            </svg>
+                                        </button>
+                                    </div>
+                                    <input type="hidden" id="destinationId" name="destinationId">
+                                    <ul id="destinationDropdown" class="dropdown-menu w-100" style="max-height: 300px; overflow-y: auto;"></ul>
+                                </div>
+                                <div id="destinationError" class="invalid-feedback" style="display: none;"></div>
+                            </div>
+
+                            <!-- Tarih -->
+                            <div class="col-md-6">
+                                <label for="date" class="form-label">Tarih</label>
+                                <input type="date"
+                                       id="date"
+                                       name="date"
+                                       class="form-control"
+                                       min="@DateTime.Now.ToString("yyyy-MM-dd")"
+                                       value="@Model.SelectedDate.ToString("yyyy-MM-dd")"
+                                       required>
+                                <div id="dateError" class="invalid-feedback" style="display: none;"></div>
+                            </div>
+
+                            <!-- Hızlı Tarih Butonları -->
+                            <div class="col-md-6 d-flex align-items-end">
+                                <div class="btn-group w-100" role="group">
+                                    <button type="button" class="btn btn-outline-primary quick-date" data-days="0">Bugün</button>
+                                    <button type="button" class="btn btn-outline-primary quick-date" data-days="1">Yarın</button>
+                                </div>
+                            </div>
+
+                            <!-- Ara Butonu -->
+                            <div class="col-12">
+                                <button type="submit" class="btn btn-primary w-100 btn-lg">Bileti Bul</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        let allLocations = @Html.Raw(Json.Serialize(Model.Locations)) || [];
+        let originSelected = false;
+        let destinationSelected = false;
+
+        // LocalStorage'dan verileri yükle
+        $(document).ready(function() {
+            // Lokasyonların yüklendiğini kontrol et
+            if (allLocations.length === 0) {
+                console.warn('Lokasyonlar yüklenemedi');
+            }
+
+            loadFromLocalStorage();
+
+            const originInput = document.getElementById('originSearch');
+            const destinationInput = document.getElementById('destinationSearch');
+            const originDropdownElement = document.getElementById('originDropdown');
+            const destinationDropdownElement = document.getElementById('destinationDropdown');
+
+            // Clear button görünürlük kontrolü
+            function toggleClearButton(inputId, buttonId) {
+                const input = $(`#${inputId}`);
+                const button = $(`#${buttonId}`);
+                
+                if (input.val().trim().length > 0) {
+                    button.show();
+                } else {
+                    button.hide();
+                }
+            }
+
+            // Clear button click events
+            $('#clearOrigin').on('click', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                $('#originSearch').val('');
+                $('#originId').val('');
+                originSelected = false;
+                $(this).hide();
+                hideError('origin');
+                saveToLocalStorage();
+                $('#originSearch').focus();
+            });
+
+            $('#clearDestination').on('click', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                $('#destinationSearch').val('');
+                $('#destinationId').val('');
+                destinationSelected = false;
+                $(this).hide();
+                hideError('destination');
+                saveToLocalStorage();
+                $('#destinationSearch').focus();
+            });
+
+            // Dropdown'u göster/gizle helper fonksiyonu
+            function showDropdown(element) {
+                element.classList.add('show');
+                element.style.display = 'block';
+            }
+
+            function hideDropdown(element) {
+                element.classList.remove('show');
+                element.style.display = 'none';
+            }
+
+            function isDropdownShown(element) {
+                return element.classList.contains('show');
+            }
+
+            // Validation helper fonksiyonları
+            function showError(elementId, message) {
+                const errorElement = $(`#${elementId}Error`);
+                const inputElement = $(`#${elementId}Search`);
+
+                errorElement.text(message).show();
+                inputElement.addClass('is-invalid');
+            }
+
+            function hideError(elementId) {
+                const errorElement = $(`#${elementId}Error`);
+                const inputElement = $(`#${elementId}Search`);
+
+                errorElement.hide();
+                inputElement.removeClass('is-invalid');
+            }
+
+            function clearAllErrors() {
+                hideError('origin');
+                hideError('destination');
+                $('#dateError').hide();
+                $('#date').removeClass('is-invalid');
+            }
+
+            // Quick date butonlarını güncelle
+            function updateQuickDateButtons() {
+                const selectedDate = $('#date').val();
+                if (!selectedDate) return;
+
+                const selected = new Date(selectedDate);
+                const today = new Date();
+                const tomorrow = new Date();
+
+                today.setHours(0, 0, 0, 0);
+                tomorrow.setDate(today.getDate() + 1);
+                tomorrow.setHours(0, 0, 0, 0);
+                selected.setHours(0, 0, 0, 0);
+
+                // Tüm butonlardan active class'ını kaldır
+                $('.quick-date').removeClass('active');
+
+                // Seçili tarihe göre ilgili butonu active yap
+                if (selected.getTime() === today.getTime()) {
+                    $('.quick-date[data-days="0"]').addClass('active');
+                } else if (selected.getTime() === tomorrow.getTime()) {
+                    $('.quick-date[data-days="1"]').addClass('active');
+                }
+            }
+
+            // Origin search - input ve focus event'leri
+            $('#originSearch').on('input focus', function(e) {
+                const searchText = $(this).val();
+                
+                // Clear button görünürlüğünü güncelle
+                toggleClearButton('originSearch', 'clearOrigin');
+                
+                // Input boşsa hidden field'ı da temizle
+                if (!searchText || searchText.trim() === '') {
+                    $('#originId').val('');
+                    originSelected = false;
+                }
+                
+                filterLocations(searchText, 'origin');
+                hideError('origin');
+
+                if (!isDropdownShown(originDropdownElement)) {
+                    showDropdown(originDropdownElement);
+                }
+            });
+
+            $('#originSearch').on('click', function() {
+                if ($(this).val().length === 0) {
+                    filterLocations('', 'origin');
+                }
+                if (!isDropdownShown(originDropdownElement)) {
+                    showDropdown(originDropdownElement);
+                }
+            });
+
+            // Origin search - keyup event (silme işlemi için)
+            $('#originSearch').on('keyup', function(e) {
+                const searchText = $(this).val();
+                
+                // Clear button görünürlüğünü güncelle
+                toggleClearButton('originSearch', 'clearOrigin');
+                
+                // Input boşaldıysa temizle
+                if (!searchText || searchText.trim() === '') {
+                    $('#originId').val('');
+                    originSelected = false;
+                    saveToLocalStorage();
+                }
+            });
+
+            // Destination search - input ve focus event'leri
+            $('#destinationSearch').on('input focus', function(e) {
+                const searchText = $(this).val();
+                
+                // Clear button görünürlüğünü güncelle
+                toggleClearButton('destinationSearch', 'clearDestination');
+                
+                // Input boşsa hidden field'ı da temizle
+                if (!searchText || searchText.trim() === '') {
+                    $('#destinationId').val('');
+                    destinationSelected = false;
+                }
+                
+                filterLocations(searchText, 'destination');
+                hideError('destination');
+
+                if (!isDropdownShown(destinationDropdownElement)) {
+                    showDropdown(destinationDropdownElement);
+                }
+            });
+
+            $('#destinationSearch').on('click', function() {
+                if ($(this).val().length === 0) {
+                    filterLocations('', 'destination');
+                }
+                if (!isDropdownShown(destinationDropdownElement)) {
+                    showDropdown(destinationDropdownElement);
+                }
+            });
+
+            // Destination search - keyup event (silme işlemi için)
+            $('#destinationSearch').on('keyup', function(e) {
+                const searchText = $(this).val();
+                
+                // Clear button görünürlüğünü güncelle
+                toggleClearButton('destinationSearch', 'clearDestination');
+                
+                // Input boşaldıysa temizle
+                if (!searchText || searchText.trim() === '') {
+                    $('#destinationId').val('');
+                    destinationSelected = false;
+                    saveToLocalStorage();
+                }
+            });
+
+            // Date input change event
+            $('#date').on('change', function() {
+                $('#dateError').hide();
+                $(this).removeClass('is-invalid');
+                updateQuickDateButtons(); // Tarih değişince butonları güncelle
+            });
+
+            // Bootstrap dropdown-item click event'leri
+            $(document).on('click', '#originDropdown .dropdown-item', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+
+                const id = $(this).data('id');
+                const name = $(this).data('name') || $(this).text().trim();
+
+                if (id && name) {
+                    $('#originId').val(id);
+                    $('#originSearch').val(name);
+                    hideDropdown(originDropdownElement);
+                    originSelected = true;
+                    hideError('origin');
+                    toggleClearButton('originSearch', 'clearOrigin');
+                    saveToLocalStorage();
+                }
+            });
+
+            $(document).on('click', '#destinationDropdown .dropdown-item', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+
+                const id = $(this).data('id');
+                const name = $(this).data('name') || $(this).text().trim();
+
+                if (id && name) {
+                    $('#destinationId').val(id);
+                    $('#destinationSearch').val(name);
+                    hideDropdown(destinationDropdownElement);
+                    destinationSelected = true;
+                    hideError('destination');
+                    toggleClearButton('destinationSearch', 'clearDestination');
+                    saveToLocalStorage();
+                }
+            });
+
+            // Swap locations
+            $('#swapLocations').on('click', function() {
+                const originId = $('#originId').val();
+                const originName = $('#originSearch').val();
+                const destId = $('#destinationId').val();
+                const destName = $('#destinationSearch').val();
+
+                $('#originId').val(destId);
+                $('#originSearch').val(destName);
+                $('#destinationId').val(originId);
+                $('#destinationSearch').val(originName);
+
+                // Clear button'ları güncelle
+                toggleClearButton('originSearch', 'clearOrigin');
+                toggleClearButton('destinationSearch', 'clearDestination');
+
+                clearAllErrors();
+                saveToLocalStorage();
+            });
+
+            // Quick date buttons
+            $('.quick-date').on('click', function() {
+                $('.quick-date').removeClass('active');
+                $(this).addClass('active');
+                const days = $(this).data('days');
+                const date = new Date();
+                date.setDate(date.getDate() + days);
+                $('#date').val(date.toISOString().split('T')[0]);
+                $('#dateError').hide();
+                $('#date').removeClass('is-invalid');
+                saveToLocalStorage();
+            });
+
+            // Form validation
+            $('#searchForm').on('submit', function(e) {
+                clearAllErrors();
+                let hasError = false;
+
+                const originId = $('#originId').val();
+                const destId = $('#destinationId').val();
+                const date = $('#date').val();
+
+                // Kalkış noktası kontrolü
+                if (!originId) {
+                    showError('origin', 'Lütfen kalkış noktası seçiniz.');
+                    hasError = true;
+                }
+
+                // Varış noktası kontrolü
+                if (!destId) {
+                    showError('destination', 'Lütfen varış noktası seçiniz.');
+                    hasError = true;
+                }
+
+                // Aynı nokta kontrolü
+                if (originId && destId && originId === destId) {
+                    showError('destination', 'Kalkış ve varış noktası aynı olamaz.');
+                    hasError = true;
+                }
+
+                // Tarih kontrolü
+                if (!date) {
+                    $('#dateError').text('Lütfen tarih seçiniz.').show();
+                    $('#date').addClass('is-invalid');
+                    hasError = true;
+                } else {
+                    const selectedDate = new Date(date);
+                    const today = new Date();
+                    today.setHours(0, 0, 0, 0);
+
+                    if (selectedDate < today) {
+                        $('#dateError').text('Geçmiş bir tarih seçilemez.').show();
+                        $('#date').addClass('is-invalid');
+                        hasError = true;
+                    }
+                }
+
+                if (hasError) {
+                    e.preventDefault();
+                    // İlk hatalı alana scroll yap
+                    const firstError = $('.is-invalid').first();
+                    if (firstError.length) {
+                        $('html, body').animate({
+                            scrollTop: firstError.offset().top - 100
+                        }, 300);
+                    }
+                    return false;
+                }
+
+                saveToLocalStorage();
+            });
+
+            // Dropdown dışına tıklandığında kapat
+            $(document).on('click', function(e) {
+                if (!$(e.target).closest('.location-search, #originDropdown, #destinationDropdown, .dropdown-item, .clear-btn').length) {
+                    if (isDropdownShown(originDropdownElement)) {
+                        hideDropdown(originDropdownElement);
+                    }
+                    if (isDropdownShown(destinationDropdownElement)) {
+                        hideDropdown(destinationDropdownElement);
+                    }
+                }
+            });
+
+            // Sayfa yüklendiğinde buton durumunu güncelle
+            updateQuickDateButtons();
+            
+            // Sayfa yüklendiğinde clear button'ları güncelle
+            toggleClearButton('originSearch', 'clearOrigin');
+            toggleClearButton('destinationSearch', 'clearDestination');
+        });
+
+        function filterLocations(searchText, type) {
+            const searchValue = (searchText || '').toLowerCase();
+            let filtered;
+
+            if (searchValue === '') {
+                filtered = allLocations.slice(0, 50);
+            } else {
+                filtered = allLocations.filter(loc =>
+                    loc.name.toLowerCase().includes(searchValue)
+                ).slice(0, 50);
+            }
+
+            const dropdownId = type === 'origin' ? '#originDropdown' : '#destinationDropdown';
+            const dropdown = $(dropdownId);
+            dropdown.empty();
+
+            if (filtered.length > 0) {
+                filtered.forEach(loc => {
+                    const item = $('<li>')
+                        .append(
+                            $('<a>')
+                                .addClass('dropdown-item')
+                                .attr('href', '#')
+                                .data('id', loc.id)
+                                .data('name', loc.name)
+                                .text(loc.name)
+                        );
+                    dropdown.append(item);
+                });
+            } else {
+                const item = $('<li>')
+                    .append(
+                        $('<span>')
+                            .addClass('dropdown-item-text text-muted')
+                            .text('Sonuç bulunamadı')
+                    );
+                dropdown.append(item);
+            }
+        }
+
+        function saveToLocalStorage() {
+            localStorage.setItem('originId', $('#originId').val());
+            localStorage.setItem('originName', $('#originSearch').val());
+            localStorage.setItem('destinationId', $('#destinationId').val());
+            localStorage.setItem('destinationName', $('#destinationSearch').val());
+            localStorage.setItem('date', $('#date').val());
+        }
+
+        function loadFromLocalStorage() {
+            const originId = localStorage.getItem('originId');
+            const originName = localStorage.getItem('originName');
+            const destId = localStorage.getItem('destinationId');
+            const destName = localStorage.getItem('destinationName');
+            const date = localStorage.getItem('date');
+
+            if (originId && originName) {
+                $('#originId').val(originId);
+                $('#originSearch').val(originName);
+                originSelected = true;
+            }
+
+            if (destId && destName) {
+                $('#destinationId').val(destId);
+                $('#destinationSearch').val(destName);
+                destinationSelected = true;
+            }
+
+            if (date) {
+                $('#date').val(date);
+            }
+        }
+    </script>
+}
